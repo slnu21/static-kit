@@ -18,6 +18,7 @@ export default defineConfig({
         'save/file': 'src/save/file.ts',
         rng: 'src/rng.ts',
         daily: 'src/daily.ts',
+        catalog: 'src/catalog.ts',
       },
       formats: ['es'],
       fileName: (_format, name) => `${name}.js`,

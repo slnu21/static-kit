@@ -46,6 +46,10 @@
       "types": "./dist/daily.d.ts",
       "import": "./dist/daily.js"
     },
+    "./catalog": {
+      "types": "./dist/catalog.d.ts",
+      "import": "./dist/catalog.js"
+    },
     "./package.json": "./package.json"
   },
   "engines": {
