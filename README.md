@@ -184,7 +184,7 @@ renderOtherTools('en', 'pulsar-timer', { soon: 'hide', kind: 'web', hubLink: fal
 
 - 항목: `id`, `name`(문자열 또는 `{ko,en}`), `tagline{ko,en}`, `kind`(`web`·`desktop`·`game`), `status`(`live`·`soon`), `url`(웹 주소 또는 Microsoft Store 페이지), `icon`(인라인 SVG·`currentColor`), `color`, `platform`, `localePaths`(도구가 `/ko/`·`/en/` 홈을 가지면 true → `productUrl(p, lang)` 이 언어 홈 주소를 돌려줌).
 - `soon` 은 기본으로 링크 없는 글자 + "(준비 중)" — 아직 열리지 않은 주소로 보내지 않습니다. 데스크톱 앱은 Store 링크 + `Windows` 표기.
-- 데스크톱 앱은 **Microsoft Store 에 실제로 게시된 것만** 넣습니다. 제품을 추가하면 `npm run build` 후 소비 프로젝트에 `dist/catalog.js`(+`.d.ts`)를 다시 복사하세요(공유 청크 없이 파일 하나).
+- 데스크톱 앱은 **Microsoft Store 게시분 = 블로그 apps 페이지(`SlnU-blog/_pages/apps/index.md`)의 "Microsoft Store" 표 기준** — 같은 앱, 같은 순서, 같은 Store ID(테스트가 고정). 제품을 추가하면 `npm run build` 후 소비 프로젝트에 `dist/catalog.js`(+`.d.ts`)를 다시 복사하세요(공유 청크 없이 파일 하나).
 
 ## 설계 지침: 짧은 로그라이크 세이브 코드
 
