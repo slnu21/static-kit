@@ -20,3 +20,4 @@ export {
 export * from './save/file';
 export * from './rng';
 export * from './daily';
+export * from './catalog';

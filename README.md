@@ -53,6 +53,7 @@ import { createRng } from 'static-kit/rng';
 | `static-kit/save/file` | 세이브 파일 다운로드/파일 선택 가져오기 | Blob, `<input type=file>` |
 | `static-kit/rng` | 시드 PRNG(sfc32 + cyrb128), 상태 직렬화 | 없음 |
 | `static-kit/daily` | 날짜 키·타임존, 퍼즐 번호, 연속 기록, 공유 텍스트 | `Intl` |
+| `static-kit/catalog` | Ondol Works 제품 목록(단일 원천) + "다른 도구" 링크 줄 HTML 생성 | 없음(DOM 없이 문자열) |
 | `static-kit` | 위 전부 재노출(편의용) | |
 
 빌드 크기(압축 안 함 / gzip): rng 4.6 KB / 2.0 KB, daily 5.9 KB / 2.5 KB, save/code ≈ 9.6 KB / 4.2 KB(공유 청크 포함), save/store ≈ 12.7 KB / 4.7 KB(공유 청크 포함).
@@ -169,6 +170,22 @@ msUntilNextDay(Date.now(), opts);             // 다음 퍼즐까지 남은 ms
 
 모든 퍼즐이 같은 순간에 바뀌어야 하면 `timeZone` 을 고정(`'UTC'` 등)하세요. 날짜 계산은 달력 일 단위라 서머타임 전환일에도 하루가 23·25시간이 되지 않습니다.
 
+### catalog — Ondol Works 제품 목록
+
+[Ondol Works](https://ondolworks.com) 의 도구·앱 목록을 한곳에 둡니다. 허브 사이트와 각 도구의 "다른 도구" 줄이 같은 데이터를 씁니다.
+
+```ts
+import { listProducts, renderOtherTools, productName } from 'static-kit/catalog';
+
+listProducts({ kind: 'web', status: 'live' });         // 카탈로그 순서 유지, exclude: 'id' | ['id', …]
+renderOtherTools('ko', 'pulsar-timer');                // <nav class="ow-other" …>…</nav> (빌드 시 정적 HTML에 넣기)
+renderOtherTools('en', 'pulsar-timer', { soon: 'hide', kind: 'web', hubLink: false });
+```
+
+- 항목: `id`, `name`(문자열 또는 `{ko,en}`), `tagline{ko,en}`, `kind`(`web`·`desktop`·`game`), `status`(`live`·`soon`), `url`(웹 주소 또는 Microsoft Store 페이지), `icon`(인라인 SVG·`currentColor`), `color`, `platform`.
+- `soon` 은 기본으로 링크 없는 글자 + "(준비 중)" — 아직 열리지 않은 주소로 보내지 않습니다. 데스크톱 앱은 Store 링크 + `Windows` 표기.
+- 데스크톱 앱은 **Microsoft Store 에 실제로 게시된 것만** 넣습니다. 제품을 추가하면 `npm run build` 후 소비 프로젝트에 `dist/catalog.js`(+`.d.ts`)를 다시 복사하세요(공유 청크 없이 파일 하나).
+
 ## 설계 지침: 짧은 로그라이크 세이브 코드
 
 **생성된 결과를 저장하지 말고, 생성의 입력을 저장하세요.** 맵·몬스터 배치는 `(시드, 층)` 으로 언제든 똑같이 다시 만들 수 있습니다. 세이브에는 플레이어가 *바꾼 것* 만 넣습니다.
@@ -257,6 +274,7 @@ Not published to npm. Two ways to use it from a local project:
 | `static-kit/save/file` | Download a save file / pick and read one. |
 | `static-kit/rng` | Seeded sfc32 PRNG with cyrb128 string seeding; `int/float/chance/pick/shuffle/weighted`; serializable `state()` / `restoreRng()`. |
 | `static-kit/daily` | Date keys in a chosen time zone, puzzle numbers, streaks, share text, countdown to next day. |
+| `static-kit/catalog` | The Ondol Works product list (single source) plus `listProducts({kind,status,exclude})` and `renderOtherTools(lang, currentId)`, which returns a "more tools" line as an HTML string (no DOM, build-time friendly). `soon` items render as plain text, desktop apps link to their Microsoft Store page. Self-contained: vendor `dist/catalog.js` alone. |
 
 **Hashes are not storage.** A hash (CRC, SHA…) is one-way: you cannot recover data from it. The data lives in the payload (compressed + encoded, decodable by anyone); the CRC only detects typos and truncation. It is not encryption. The optional `key` mixes a client-side key into the checksum — since the key ships with the client, this is **deterrence, not security**.
 
