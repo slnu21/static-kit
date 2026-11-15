@@ -1,0 +1,146 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>static-kit browser check</title>
+<style>
+  :root { color-scheme: light dark; --ok: #1a7f37; --bad: #cf222e; }
+  body { font: 14px/1.5 system-ui, sans-serif; margin: 16px; max-width: 760px; }
+  li { margin: 2px 0; }
+  .ok::before { content: 'PASS '; color: var(--ok); font-weight: 700; }
+  .bad::before { content: 'FAIL '; color: var(--bad); font-weight: 700; }
+  code { font-size: 12px; }
+</style>
+</head>
+<body>
+<h1>static-kit 브라우저 점검</h1>
+<p>
+  <code>npm run build</code> 후 <code>npm run test:integration</code> 이 이 페이지를 헤드리스 Edge로 엽니다.
+  수동 확인: 정적 서버로 저장소 루트를 띄우고 <code>?phase=write</code> → <code>?phase=verify</code> 순서로 열기.
+</p>
+<p id="phase"></p>
+<ul id="out"></ul>
+<script type="module">
+  import {
+    createSaveStore, indexedDBBackend, localStorageBackend, autoBackend, isSaveError,
+    requestPersistence, isPersisted, storageStatus,
+    createSaveCode, hasDeflateRaw,
+    readFileText, saveFileName,
+    createRng, dateKey,
+  } from '../dist/index.js';
+
+  const phase = new URLSearchParams(location.search).get('phase') ?? 'write';
+  document.getElementById('phase').textContent = `phase = ${phase}`;
+  const checks = [];
+  const out = document.getElementById('out');
+
+  async function check(name, fn) {
+    let ok = false, detail = '';
+    try {
+      const r = await fn();
+      ok = r !== false;
+      detail = r === true || r === false || r === undefined ? '' : JSON.stringify(r);
+    } catch (e) {
+      detail = `${e?.name ?? 'Error'}: ${e?.message ?? e}`;
+    }
+    checks.push({ name, ok, detail });
+    const li = document.createElement('li');
+    li.className = ok ? 'ok' : 'bad';
+    li.textContent = `${name}${detail ? ' — ' + detail : ''}`;
+    out.appendChild(li);
+  }
+  const eq = (a, b) => JSON.stringify(a) === JSON.stringify(b);
+  const sample = { name: '모험가', floor: 3, inv: ['sword', 'potion'], rng: createRng('x').state() };
+
+  const idb = () => indexedDBBackend({ dbName: 'static-kit-check' });
+  const ls = () => localStorageBackend({ prefix: 'static-kit-check:' });
+
+  if (phase === 'write') {
+    for (const [label, make] of [['IndexedDB', idb], ['localStorage', ls]]) {
+      await check(`${label}: save → load → list → remove`, async () => {
+        const store = createSaveStore({ gameId: 'check', version: 1, backend: make() });
+        await store.save('tmp', sample);
+        const loaded = await store.load('tmp');
+        const listed = (await store.list()).some((s) => s.slot === 'tmp');
+        await store.remove('tmp');
+        const gone = (await store.load('tmp')) === undefined;
+        return eq(loaded, sample) && listed && gone;
+      });
+      await check(`${label}: autosave debounce + flush`, async () => {
+        const store = createSaveStore({ gameId: 'check', version: 1, backend: make(), autosaveDelay: 10_000 });
+        store.autosave('auto', 1); store.autosave('auto', 2); store.autosave('auto', 3);
+        const pendingBefore = store.hasPending('auto');
+        await store.flush();
+        const v = await store.load('auto');
+        await store.remove('auto');
+        return pendingBefore && v === 3;
+      });
+      await check(`${label}: v1 data migrates on load (v2 store), newer data rejected`, async () => {
+        const backend = make();
+        await createSaveStore({ gameId: 'check', version: 1, backend }).save('mig', { a: 1 });
+        const v2 = createSaveStore({ gameId: 'check', version: 2, backend, migrations: { 1: (d) => ({ ...d, b: 2 }) } });
+        const migrated = await v2.load('mig');
+        let rejected = false;
+        try {
+          await createSaveStore({ gameId: 'check', version: 0, backend }).load('mig');
+        } catch (e) { rejected = isSaveError(e, 'VERSION_TOO_NEW'); }
+        await v2.remove('mig');
+        return eq(migrated, { a: 1, b: 2 }) && rejected;
+      });
+      await check(`${label}: write slot that must survive a page reload`, async () => {
+        await createSaveStore({ gameId: 'check', version: 1, backend: make() }).save('persist', sample);
+      });
+    }
+
+    await check('autoBackend picks IndexedDB', async () => {
+      const kind = await autoBackend().resolvedKind();
+      return kind === 'indexeddb' ? true : Promise.reject(new Error(`got ${kind}`));
+    });
+
+    await check('persist: requestPersistence/isPersisted return booleans (no throw)', async () => {
+      const granted = await requestPersistence();
+      const persisted = await isPersisted();
+      return typeof granted === 'boolean' && (persisted === undefined || typeof persisted === 'boolean')
+        ? { granted, persisted } : false;
+    });
+    await check('persist: storageStatus has a quota estimate', async () => {
+      const s = await storageStatus();
+      return s.supported && s.estimate && s.estimate.quota > 0 ? { quota: s.estimate.quota, usage: s.estimate.usage } : false;
+    });
+
+    await check('code: CompressionStream deflate-raw available', () => hasDeflateRaw());
+    await check('code: export → import round-trip in the browser', async () => {
+      const codec = createSaveCode({ gameId: 'check', version: 1 });
+      const code = await codec.exportCode(sample);
+      return eq(await codec.importCode(`\n  ${code}  \n`), sample) ? { length: code.length } : false;
+    });
+    await check('code: typo is rejected with CHECKSUM', async () => {
+      const codec = createSaveCode({ gameId: 'check', version: 1 });
+      const code = await codec.exportCode(sample);
+      const i = code.indexOf('.', 8) + 3;
+      const bad = code.slice(0, i) + (code[i] === 'A' ? 'B' : 'A') + code.slice(i + 1);
+      try { await codec.importCode(bad); return false; } catch (e) { return isSaveError(e, 'CHECKSUM'); }
+    });
+
+    await check('file: readFileText + saveFileName', async () => {
+      const text = await readFileText(new Blob(['{"ok":1}'], { type: 'application/json' }));
+      return text === '{"ok":1}' && saveFileName('check', { slot: 'main', date: null }) === 'check-main.json';
+    });
+    await check('rng/daily run in the browser', () =>
+      createRng('static-kit').uint32() === 1405215447 && dateKey(Date.UTC(2026, 10, 14, 15, 30), { timeZone: 'Asia/Seoul' }) === '2026-11-15');
+  } else {
+    for (const [label, make] of [['IndexedDB', idb], ['localStorage', ls]]) {
+      await check(`${label}: slot survived the reload`, async () => {
+        const store = createSaveStore({ gameId: 'check', version: 1, backend: make() });
+        const loaded = await store.load('persist');
+        await store.remove('persist');
+        return eq(loaded, sample);
+      });
+    }
+  }
+
+  window.__STATIC_KIT_RESULT = { phase, ok: checks.every((c) => c.ok), checks };
+</script>
+</body>
+</html>

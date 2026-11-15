@@ -1,0 +1,68 @@
+{
+  "name": "static-kit",
+  "version": "0.1.0",
+  "description": "Zero-dependency TypeScript toolkit for serverless static web apps and games: save slots, save codes, seeded RNG, daily puzzles.",
+  "author": "slnu21 (SlnU)",
+  "license": "MIT",
+  "private": true,
+  "type": "module",
+  "sideEffects": false,
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/slnu21/static-kit.git"
+  },
+  "files": [
+    "dist"
+  ],
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    },
+    "./save/store": {
+      "types": "./dist/save/store.d.ts",
+      "import": "./dist/save/store.js"
+    },
+    "./save/persist": {
+      "types": "./dist/save/persist.d.ts",
+      "import": "./dist/save/persist.js"
+    },
+    "./save/code": {
+      "types": "./dist/save/code.d.ts",
+      "import": "./dist/save/code.js"
+    },
+    "./save/file": {
+      "types": "./dist/save/file.d.ts",
+      "import": "./dist/save/file.js"
+    },
+    "./rng": {
+      "types": "./dist/rng.d.ts",
+      "import": "./dist/rng.js"
+    },
+    "./daily": {
+      "types": "./dist/daily.d.ts",
+      "import": "./dist/daily.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "scripts": {
+    "build": "vite build && tsc -p tsconfig.build.json",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:integration": "node scripts/integration-check.mjs",
+    "measure": "vitest run test/roguelike-example.test.ts --mode measure --silent=false",
+    "prepare": "npm run build"
+  },
+  "devDependencies": {
+    "typescript": "^7.0.2",
+    "vite": "^8.3.8",
+    "vitest": "^5.1.0"
+  }
+}
