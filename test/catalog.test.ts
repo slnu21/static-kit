@@ -7,6 +7,7 @@ import {
   listProducts,
   productName,
   productTagline,
+  productUrl,
   renderOtherTools,
   type Product,
 } from '../src/catalog';
@@ -84,6 +85,19 @@ describe('names and escaping', () => {
   });
   it('escapes HTML special characters', () => {
     expect(escapeHtml(`<a href="x">'&'</a>`)).toBe('&lt;a href=&quot;x&quot;&gt;&#39;&amp;&#39;&lt;/a&gt;');
+  });
+});
+
+describe('productUrl', () => {
+  it('adds the language home only for products with localePaths', () => {
+    expect(productUrl({ ...sample[0]!, localePaths: true }, 'ko')).toBe('https://a.example/ko/');
+    expect(productUrl({ ...sample[0]!, url: 'https://a.example/', localePaths: true }, 'en')).toBe('https://a.example/en/');
+    expect(productUrl(sample[2]!, 'ko')).toBe('https://store.example/c?x=1&y=2');
+    expect(productUrl(findProduct('pulsar-timer')!, 'en')).toBe('https://timer.ondolworks.com/en/');
+  });
+  it('is used by renderOtherTools', () => {
+    const html = renderOtherTools('ko', 'b', { products: [{ ...sample[0]!, localePaths: true }] });
+    expect(html).toContain('href="https://a.example/ko/"');
   });
 });
 

@@ -31,6 +31,8 @@ export interface Product {
   color: string;
   /** Platform note for non-web products, e.g. "Windows". */
   platform?: string;
+  /** True when the web tool serves language homes at `/ko/` and `/en/` (see productUrl). */
+  localePaths?: boolean;
 }
 
 export const BRAND = {
@@ -53,6 +55,7 @@ export const PRODUCTS: readonly Product[] = [
     kind: 'web',
     status: 'live',
     url: 'https://timer.ondolworks.com',
+    localePaths: true,
     icon: svg('<circle cx="12" cy="13" r="8"/><path d="M12 9v4l2.5 2.5M9.5 2.5h5"/>'),
     color: '#0F6CBD',
   },
@@ -140,6 +143,11 @@ export function productName(p: Product, lang: CatalogLang): string {
   return typeof p.name === 'string' ? p.name : p.name[lang];
 }
 
+/** Link target for a language: `<url>/<lang>/` when the product has localePaths, else `url`. */
+export function productUrl(p: Product, lang: CatalogLang): string {
+  return p.localePaths ? `${p.url.replace(/\/+$/, '')}/${lang}/` : p.url;
+}
+
 export function productTagline(p: Product, lang: CatalogLang): string {
   return p.tagline[lang];
 }
@@ -201,7 +209,7 @@ export function renderOtherTools(lang: CatalogLang, currentId: string, opts: Oth
       return `<li ${attrs}><span title="${title}">${name}</span> <small class="${cls}__note">(${copy.soon})</small></li>`;
     }
     const note = p.platform ? ` <small class="${cls}__note">${escapeHtml(p.platform)}</small>` : '';
-    return `<li ${attrs}><a href="${escapeHtml(p.url)}" title="${title}">${name}</a>${note}</li>`;
+    return `<li ${attrs}><a href="${escapeHtml(productUrl(p, lang))}" title="${title}">${name}</a>${note}</li>`;
   });
   if (opts.hubLink !== false) {
     lis.push(`<li class="${cls}__item ${cls}__hub"><a href="${BRAND.url}/${lang}/">${copy.all}</a></li>`);
