@@ -42,6 +42,21 @@ describe('catalog data', () => {
     }
   });
 
+  it('lists exactly the Microsoft Store apps from the blog apps page, in that order', () => {
+    // 원천: SlnU-blog/_pages/apps/index.md "Microsoft Store" 표(사용자 관리 공식 목록)
+    expect(listProducts({ kind: 'desktop' }).map((p) => [p.id, p.url.slice(-12)])).toEqual([
+      ['atlas', '9NMW5KS7HD1R'],
+      ['shotlog', '9PC70G3LNQ8Q'],
+      ['clowder', '9N4795KFCRC3'],
+      ['readme-md', '9N9QMXQPND3H'],
+      ['todo-md', '9NLK1K3WVK8F'],
+      ['pulsardock', '9NLVDQ785190'],
+      ['queuey', '9PNV73XF9B4N'],
+    ]);
+    expect(productName(findProduct('queuey')!, 'ko')).toBe('Queuey(큐이)');
+    expect(productName(findProduct('queuey')!, 'en')).toBe('Queuey');
+  });
+
   it('keeps web tools on ondolworks.com subdomains and has no games yet', () => {
     for (const p of listProducts({ kind: 'web' })) expect(new URL(p.url).hostname).toMatch(/\.ondolworks\.com$/);
     expect(listProducts({ kind: 'game' })).toEqual([]);

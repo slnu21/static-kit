@@ -3,7 +3,8 @@
 // Pure data + pure string helpers: no DOM, no network, no dependencies.
 //
 // Add a product here, rebuild, and re-vendor dist/catalog.js into the consumers.
-// Desktop entries are listed only once they are actually published on the Microsoft Store.
+// Desktop entries = apps published on the Microsoft Store, following the official list on the blog's apps page
+// (SlnU-blog/_pages/apps/index.md, "Microsoft Store" table): same apps, same order, Store IDs from there.
 
 export type CatalogLang = 'ko' | 'en';
 export type ProductKind = 'web' | 'desktop' | 'game';
@@ -72,18 +73,20 @@ export const PRODUCTS: readonly Product[] = [
     icon: svg('<path d="M4 4h11l5 5v11H4z"/><path d="M15 4v5h5M8 17v-5l2 2.5 2-2.5v5M15.5 12v5m-1.8-1.8 1.8 1.8 1.8-1.8"/>'),
     color: '#3D7A5C',
   },
+  // Desktop: Microsoft Store apps, in the order of the official list on the blog
+  // (SlnU-blog/_pages/apps/index.md, "Microsoft Store" table — the user's source of truth).
   {
-    id: 'readme-md',
-    name: 'README.md',
+    id: 'atlas',
+    name: 'Atlas',
     tagline: {
-      ko: '에이전트가 쓴 문서를 사람이 읽는 자리 — 가벼운 마크다운 리더·에디터.',
-      en: 'Where people read what agents write — a lightweight Markdown reader and editor.',
+      ko: '혼자 쓰는 로컬 우선 프로젝트 관리 — 일정·이슈·회의록·자료를 한 화면에.',
+      en: 'Local-first project management for one person: schedule, issues, meeting notes and files on one screen.',
     },
     kind: 'desktop',
     status: 'live',
-    url: 'https://apps.microsoft.com/detail/9N9QMXQPND3H',
-    icon: svg('<path d="M4 4h11l5 5v11H4z"/><path d="M15 4v5h5M8 13h8M8 17h5"/>'),
-    color: '#2F6B4F',
+    url: 'https://apps.microsoft.com/detail/9NMW5KS7HD1R',
+    icon: svg('<path d="M3 6.5 9 4l6 2.5L21 4v13.5L15 20l-6-2.5L3 20z"/><path d="M9 4v13.5M15 6.5V20"/>'),
+    color: '#1F7A75',
     platform: 'Windows',
   },
   {
@@ -104,14 +107,70 @@ export const PRODUCTS: readonly Product[] = [
     id: 'clowder',
     name: 'Clowder',
     tagline: {
-      ko: '여러 Claude Code 세션을 한 화면에서 다루는 터미널 워크스페이스.',
-      en: 'A terminal workspace for running parallel Claude Code sessions on one screen.',
+      ko: '여러 Claude Code 세션을 나란히 — 터미널·git·탐색기·뷰어를 한 창에.',
+      en: 'A terminal workspace for parallel Claude Code sessions, with git, explorer and viewer in one window.',
     },
     kind: 'desktop',
     status: 'live',
     url: 'https://apps.microsoft.com/detail/9N4795KFCRC3',
     icon: svg('<rect x="3" y="4" width="18" height="16" rx="2"/><path d="M7 9l3 3-3 3M12.5 15H17"/>'),
     color: '#6B4FA0',
+    platform: 'Windows',
+  },
+  {
+    id: 'readme-md',
+    name: 'README.md',
+    tagline: {
+      ko: '에이전트가 쓴 문서를 사람이 읽는 자리 — 가벼운 마크다운 리더·에디터.',
+      en: 'Where people read what agents write — a lightweight Markdown reader and editor.',
+    },
+    kind: 'desktop',
+    status: 'live',
+    url: 'https://apps.microsoft.com/detail/9N9QMXQPND3H',
+    icon: svg('<path d="M4 4h11l5 5v11H4z"/><path d="M15 4v5h5M8 13h8M8 17h5"/>'),
+    color: '#2F6B4F',
+    platform: 'Windows',
+  },
+  {
+    id: 'todo-md',
+    name: 'TODO.md',
+    tagline: {
+      ko: '여러 프로젝트를 오가며 쓰는 화면 가장자리 할 일 띠 — 시각 메모와 주간 보고까지.',
+      en: 'A to-do strip docked to the screen edge for juggling several projects, with notes and weekly reports.',
+    },
+    kind: 'desktop',
+    status: 'live',
+    url: 'https://apps.microsoft.com/detail/9NLK1K3WVK8F',
+    icon: svg('<rect x="5" y="3" width="14" height="18" rx="2"/><path d="M8.5 9l1.6 1.6 3.2-3.2M8.5 15h7"/>'),
+    color: '#2563EB',
+    platform: 'Windows',
+  },
+  {
+    id: 'pulsardock',
+    name: 'PulsarDock',
+    tagline: {
+      ko: '즐겨찾기와 타이머를 한곳에 — 커서·독·위젯에서 부르는 런처.',
+      en: 'Favorites and timers in one place, summoned from your cursor, a dock or a widget.',
+    },
+    kind: 'desktop',
+    status: 'live',
+    url: 'https://apps.microsoft.com/detail/9NLVDQ785190',
+    icon: svg('<circle cx="12" cy="12" r="2.6"/><path d="M12 4a8 8 0 1 1-7.4 5"/><circle cx="4.6" cy="9" r="1.3"/>'),
+    color: '#3A6FD8',
+    platform: 'Windows',
+  },
+  {
+    id: 'queuey',
+    name: { ko: 'Queuey(큐이)', en: 'Queuey' },
+    tagline: {
+      ko: '작업 중 떠오른 질문과 할 일을 줄 세워 두는 픽셀 짐꾼 위젯.',
+      en: 'A pixel porter widget that lines up the questions and to-dos that come up while you work.',
+    },
+    kind: 'desktop',
+    status: 'live',
+    url: 'https://apps.microsoft.com/detail/9PNV73XF9B4N',
+    icon: svg('<rect x="3" y="11" width="5" height="5" rx="1"/><rect x="9.5" y="11" width="5" height="5" rx="1"/><rect x="16" y="11" width="5" height="5" rx="1"/><path d="M3 19.5h18M5.5 11V8.5M12 11V7.5M18.5 11V8.5"/>'),
+    color: '#A0632B',
     platform: 'Windows',
   },
 ];
