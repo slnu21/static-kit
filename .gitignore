@@ -1,0 +1,22 @@
+# === 하네스 로컬 컨텍스트 (커밋하지 않음) ===
+.claude/
+CLAUDE.md
+docs/
+.worktrees/
+.atlas/
+
+# === node / build ===
+node_modules/
+dist/
+coverage/
+.tmp/
+*.tgz
+
+# === OS ===
+.DS_Store
+Thumbs.db
+
+# === IDE ===
+.vs/
+.vscode/
+.idea/
