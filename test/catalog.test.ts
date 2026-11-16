@@ -65,7 +65,8 @@ describe('catalog data', () => {
   it('contains the known entries', () => {
     expect(findProduct('pulsar-timer')?.url).toBe('https://timer.ondolworks.com');
     expect(findProduct('pulsar-timer')?.status).toBe('live');
-    expect(findProduct('readme-md-web')?.status).toBe('soon');
+    expect(findProduct('readme-md-web')?.status).toBe('live');
+    expect(productUrl(findProduct('readme-md-web')!, 'ko')).toBe('https://md.ondolworks.com/ko/');
     expect(findProduct('nope')).toBeUndefined();
     expect(BRAND.url).toBe('https://ondolworks.com');
   });
