@@ -67,6 +67,9 @@ describe('catalog data', () => {
     expect(findProduct('pulsar-timer')?.status).toBe('live');
     expect(findProduct('readme-md-web')?.status).toBe('live');
     expect(productUrl(findProduct('readme-md-web')!, 'ko')).toBe('https://md.ondolworks.com/ko/');
+    // Archyscape 웹판 — Pages 연결 전이라 soon(링크 없이 '준비 중'), 연결 확인 뒤 live
+    expect(findProduct('archyscape-web')?.status).toBe('soon');
+    expect(productUrl(findProduct('archyscape-web')!, 'en')).toBe('https://archy.ondolworks.com/en/');
     expect(findProduct('nope')).toBeUndefined();
     expect(BRAND.url).toBe('https://ondolworks.com');
   });
