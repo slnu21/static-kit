@@ -74,6 +74,20 @@ export const PRODUCTS: readonly Product[] = [
     icon: svg('<path d="M4 4h11l5 5v11H4z"/><path d="M15 4v5h5M8 17v-5l2 2.5 2-2.5v5M15.5 12v5m-1.8-1.8 1.8 1.8 1.8-1.8"/>'),
     color: '#3D7A5C',
   },
+  {
+    id: 'archyscape-web',
+    name: 'Archyscape',
+    tagline: {
+      ko: '건물·랙·서버·가상화·서비스를 레이어로 겹쳐 그리는 인프라 구성도.',
+      en: 'Infrastructure diagrams drawn as stacked layers — building, racks, servers, virtualization, services.',
+    },
+    kind: 'web',
+    status: 'soon',
+    url: 'https://archy.ondolworks.com',
+    localePaths: true,
+    icon: svg('<path d="M12 3 3 7.5 12 12l9-4.5z"/><path d="M3 12l9 4.5 9-4.5M3 16.5 12 21l9-4.5"/>'),
+    color: '#3B6CF6',
+  },
   // Desktop: Microsoft Store apps, in the order of the official list on the blog
   // (SlnU-blog/_pages/apps/index.md, "Microsoft Store" table — the user's source of truth).
   {
