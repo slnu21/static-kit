@@ -82,7 +82,7 @@ export const PRODUCTS: readonly Product[] = [
       en: 'Infrastructure diagrams drawn as stacked layers — building, racks, servers, virtualization, services.',
     },
     kind: 'web',
-    status: 'soon',
+    status: 'live',
     url: 'https://archy.ondolworks.com',
     localePaths: true,
     icon: svg('<path d="M12 3 3 7.5 12 12l9-4.5z"/><path d="M3 12l9 4.5 9-4.5M3 16.5 12 21l9-4.5"/>'),
