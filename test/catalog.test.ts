@@ -70,6 +70,9 @@ describe('catalog data', () => {
     // Archyscape 웹판 — 2026-11-17 라이브 확인 후 live
     expect(findProduct('archyscape-web')?.status).toBe('live');
     expect(productUrl(findProduct('archyscape-web')!, 'en')).toBe('https://archy.ondolworks.com/en/');
+    // Cairn 웹판은 한국어만 — 언어 경로 없이 루트로
+    expect(findProduct('cairn-web')?.status).toBe('soon');
+    expect(productUrl(findProduct('cairn-web')!, 'en')).toBe('https://cairn.ondolworks.com');
     expect(findProduct('nope')).toBeUndefined();
     expect(BRAND.url).toBe('https://ondolworks.com');
   });

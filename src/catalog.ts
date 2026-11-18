@@ -88,6 +88,19 @@ export const PRODUCTS: readonly Product[] = [
     icon: svg('<path d="M12 3 3 7.5 12 12l9-4.5z"/><path d="M3 12l9 4.5 9-4.5M3 16.5 12 21l9-4.5"/>'),
     color: '#3B6CF6',
   },
+  {
+    id: 'cairn-web',
+    name: 'Cairn',
+    tagline: {
+      ko: '템플릿으로 일정을 역산하고 빠진 항목을 잡는 프로젝트 계획 도구(베타).',
+      en: 'Project planning from templates — back-scheduled dates and no silently skipped items (beta, Korean UI).',
+    },
+    kind: 'web',
+    status: 'soon',
+    url: 'https://cairn.ondolworks.com',
+    icon: svg('<ellipse cx="12" cy="18" rx="7.5" ry="3"/><ellipse cx="12" cy="11.5" rx="5.5" ry="2.5"/><ellipse cx="12" cy="6" rx="3.5" ry="2"/>'),
+    color: '#2B5FA8',
+  },
   // Desktop: Microsoft Store apps, in the order of the official list on the blog
   // (SlnU-blog/_pages/apps/index.md, "Microsoft Store" table — the user's source of truth).
   {
